@@ -383,10 +383,20 @@ function getSpiralMatrix(size) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
-}
+function rotateMatrix(matrix) {
+  const originalMatrix = [...matrix];
+  const arrBig = matrix;
 
+  let arrElement = [];
+  for (let i = 0; i < matrix.length; i += 1) {
+    for (let j = matrix.length - 1; j >= 0; j -= 1) {
+      arrElement = [...arrElement, originalMatrix[j][i]];
+    }
+    arrBig[i] = arrElement;
+    arrElement = [];
+  }
+  return arrBig;
+}
 /**
  * Sorts an array of numbers in ascending order in place.
  * Employ any sorting algorithm of your choice.
@@ -401,8 +411,34 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  const elemsLength = arr.length;
+  if (elemsLength === 0) {
+    return [];
+  }
+
+  const index = Math.trunc(elemsLength / 2);
+  const element = arr[index];
+
+  const smallerElems = [];
+  const biggerElems = [];
+
+  for (let i = 0; i < elemsLength; i += 1) {
+    if (i !== index) {
+      // Условие, чтобы избежать continue
+      const currentElement = arr[i];
+      if (currentElement < element) {
+        smallerElems.push(currentElement);
+      } else {
+        biggerElems.push(currentElement);
+      }
+    }
+  }
+
+  const sortedSmallerElems = sortByAsc(smallerElems);
+  const sortedBiggerElems = sortByAsc(biggerElems);
+
+  return [...sortedSmallerElems, element, ...sortedBiggerElems];
 }
 
 /**
@@ -420,10 +456,41 @@ function sortByAsc(/* arr */) {
  *  '012345', 2 => '024135' => '043215'
  *  'qwerty', 2 => 'qetwry' => 'qtrewy'
  *  '012345', 3 => '024135' => '043215' => '031425'
- *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
+ *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'c
+ *
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  const shuffle = (string) => {
+    const { length } = string;
+    let evens = [];
+    let odds = [];
+
+    for (let i = 0; i < length; i += 1) {
+      if (i % 2 === 0) {
+        evens = [...evens, string[i]];
+      } else {
+        odds = [...odds, string[i]];
+      }
+    }
+
+    const data = [...evens, ...odds];
+
+    let result = '';
+
+    for (let i = 0; i < data.length; i += 1) {
+      result = `${result}${data[i]}`;
+    }
+
+    return result;
+  };
+
+  let shuflled = str;
+
+  for (let i = 1; i <= iterations; i += 1) {
+    shuflled = shuffle(shuflled);
+  }
+
+  return shuflled;
 }
 
 /**
@@ -443,8 +510,63 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let temp = number;
+  const digits = [];
+  let length = 0;
+  while (temp > 0) {
+    digits[length] = temp % 10;
+    temp = Math.floor(temp / 10);
+    length += 1;
+  }
+
+  for (let i = 0; i < Math.floor(length / 2); i += 1) {
+    [digits[i], digits[length - 1 - i]] = [digits[length - 1 - i], digits[i]];
+  }
+
+  let i = length - 2;
+  while (i >= 0 && digits[i] >= digits[i + 1]) {
+    i -= 1;
+  }
+
+  if (i < 0) {
+    return number;
+  }
+
+  let j = length - 1;
+  while (digits[j] <= digits[i]) {
+    j -= 1;
+  }
+
+  [digits[i], digits[j]] = [digits[j], digits[i]];
+
+  const left = [];
+  for (let k = 0; k <= i; k += 1) {
+    left[left.length] = digits[k];
+  }
+
+  const right = [];
+  for (let k = i + 1; k < length; k += 1) {
+    right[right.length] = digits[k];
+  }
+
+  for (let k = 0; k < right.length - 1; k += 1) {
+    for (let l = k + 1; l < right.length; l += 1) {
+      if (right[k] > right[l]) {
+        [right[k], right[l]] = [right[l], right[k]];
+      }
+    }
+  }
+
+  let result = 0;
+  for (let m = 0; m < left.length; m += 1) {
+    result = result * 10 + left[m];
+  }
+  for (let n = 0; n < right.length; n += 1) {
+    result = result * 10 + right[n];
+  }
+
+  return result;
 }
 
 module.exports = {
